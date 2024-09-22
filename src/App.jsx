@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
@@ -7,9 +8,15 @@ function App() {
   const [user, setUser] = useState({ firstName: '', lastName: '', netID: '' })
   const [submitted, setSubmitted] = useState(false);
   const [member, setMember] = useState(true);
+  const [error, setError] = useState('');
 
   const checkMembership = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    console.log(user.netID.split(6)[0])
+
+    // normalize netId to 'abc123456' format
+    const response = await axios.post(`http://localhost:5000/api/members`, { ...user, netID: user.netID.split(6)[0].toLowerCase() });
+    setMember(response.data.isValid);
     setSubmitted(true);
   }
 
