@@ -5,6 +5,8 @@ import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
+
+  // Change from two fields into one field for name
   const [user, setUser] = useState({ firstName: '', lastName: '', netID: '' })
   const [submitted, setSubmitted] = useState(false);
   const [member, setMember] = useState(true);
@@ -15,11 +17,11 @@ function App() {
 
     if (user.firstName && user.lastName && user.netID) {
       try {
-        // normalize netId to 'abc123456' format
-        const response = await axios.post(`${import.meta.env.VITE_APP_SERVER_URL}/api/members`, { ...user, netID: user.netID.split(6)[0].toLowerCase() });
-        setMember(response.data.isValid);
+        const response = await axios.post(`${import.meta.env.VITE_APP_SERVER_URL}/api/membershpe`, { ...user, netID: user.netID.split(6)[0].toLowerCase() });
+        setMember(response.data.signedUp && response.data.paid);
+        if (response.data.signedUp && !response.data.paid) { setErrorMsg('Member has not paid dues yet') }
+        else if (!response.data.signedUp && !response.data.paid) { setErrorMsg('Name + NetID not found') }
       } catch (error) {
-        console.log(error)
         setErrorMsg(error.response ? error.response.data.error : error.message);
         setMember(false);
       }
