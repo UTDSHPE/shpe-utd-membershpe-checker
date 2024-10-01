@@ -22,6 +22,7 @@ function App() {
         const response = await axios.post(`${import.meta.env.VITE_APP_SERVER_URL}/api/membershpe`, { name: user.name.toLowerCase(), netID: user.netID.toLowerCase() });
         setMember(response.data.signedUp && response.data.paid);
         if (response.data.signedUp && !response.data.paid) { setErrorMsg('Member has not paid dues yet') }
+        else if (!response.data.signedUp && response.data.paid) { setErrorMsg('Member has paid, but has not submitted the membership form') }
         else if (!response.data.signedUp && !response.data.paid) { setErrorMsg('Name + NetID not found') }
       } catch (error) {
         setErrorMsg(error.response ? error.response.data.error : error.message);
