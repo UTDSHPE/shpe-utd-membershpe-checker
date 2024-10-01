@@ -17,12 +17,14 @@ function App() {
 
     if (user.name && user.netID) {
       try {
-        // normalize strings before sending
+
+        // normalize strings before sending request
         const response = await axios.post(`${import.meta.env.VITE_APP_SERVER_URL}/api/membershpe`, { name: user.name.toLowerCase(), netID: user.netID.toLowerCase() });
-        setMember(response.data.member);
+        setMember(response.data.signedUp && response.data.paid);
+        if (response.data.signedUp && !response.data.paid) { setErrorMsg('Member has not paid dues yet') }
+        else if (!response.data.signedUp && !response.data.paid) { setErrorMsg('Name + NetID not found') }
       } catch (error) {
-        console.log(error)
-        setErrorMsg(error.response.data.error ? error.response.data.error : error.message);
+        setErrorMsg(error.response ? error.response.data.error : error.message);
         setMember(false);
       }
     }
